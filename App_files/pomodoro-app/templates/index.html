@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pomodoro Timer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body.dark-mode {
+            background-color: #121212;
+            color: white;
+        }
+        .dark-mode .card,
+        .dark-mode .form-control,
+        .dark-mode .btn,
+        .dark-mode .list-group-item {
+            background-color: #1e1e1e;
+            color: white;
+            border-color: #333;
+        }
+        #timer-display {
+            font-size: 3em;
+        }
+    </style>
+</head>
+<body class="container py-4">
+    <h1 class="mb-4 text-center">⏰ Pomodoro Timer</h1>
+
+    <div class="form-check form-switch mb-4 text-end">
+        <input class="form-check-input" type="checkbox" id="darkModeToggle">
+        <label class="form-check-label" for="darkModeToggle">🌙 Dark Mode</label>
+    </div>
+
+    <div class="card shadow-sm mb-4 p-4 text-center">
+        <div id="timer-display" class="mb-3">25:00</div>
+        <div class="mb-3">
+            <input type="number" id="work" class="form-control d-inline-block w-auto" value="25" min="1">
+            <span>minutes</span>
+        </div>
+        <div>
+            <button id="start-btn" class="btn btn-primary me-2">▶️ Start</button>
+            <button id="stop-btn" class="btn btn-secondary">⏸️ Pause</button>
+        </div>
+        <audio id="beepSound" src="../static/audio/beep.wav" preload="auto"></audio>
+    </div>
+
+    <!-- Tasks -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5>📋 Tasks</h5>
+            <form id="task-form" class="d-flex mb-3">
+                <input type="text" id="task-input" class="form-control me-2" placeholder="Add new task..." required>
+                <button type="submit" class="btn btn-success">➕ Add</button>
+            </form>
+
+            <ul class="list-group" id="task-list">
+                {% for task in tasks %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center {% if task.done %}text-muted text-decoration-line-through{% endif %}">
+                        {{ task.name }}
+                        <div>
+                            {% if not task.done %}
+                                <form method="POST" class="d-inline">
+                                    <button type="submit" name="complete_task" value="{{ loop.index0 }}" class="btn btn-outline-success btn-sm">✓ Done</button>
+                                </form>
+                            {% else %}
+                                <form method="POST" class="d-inline">
+                                    <button type="submit" name="delete_task" value="{{ loop.index0 }}" class="btn btn-outline-danger btn-sm">🗑️ Delete</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
